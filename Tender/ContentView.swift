@@ -8,6 +8,7 @@ struct ContentView: View {
     @State private var troubleshootingAgent: LaunchAgent?
     @State private var migrationAgent: LaunchAgent?
     @State private var detachAgent: LaunchAgent?
+    @State private var backupHistoryAgent: LaunchAgent?
     @Query(sort: \Intent.label) private var allIntents: [Intent]
 
     private var intentsByLabel: [String: Intent] {
@@ -83,7 +84,8 @@ struct ContentView: View {
                 onReload: { Task { await store.reload(agent) } },
                 onOpenTroubleshooting: { troubleshootingAgent = agent },
                 onOpenMigration: { migrationAgent = agent },
-                onOpenDetach: { detachAgent = agent }
+                onOpenDetach: { detachAgent = agent },
+                onOpenBackupHistory: { backupHistoryAgent = agent }
             )
             .sheet(item: $troubleshootingAgent) { agent in
                 TroubleshootingSheet(
@@ -105,6 +107,12 @@ struct ContentView: View {
             .sheet(item: $detachAgent) { agent in
                 KeychainDetachSheet(agent: agent) {
                     detachAgent = nil
+                    Task { await store.reload() }
+                }
+            }
+            .sheet(item: $backupHistoryAgent) { agent in
+                BackupHistorySheet(agent: agent) {
+                    backupHistoryAgent = nil
                     Task { await store.reload() }
                 }
             }
@@ -146,7 +154,7 @@ private struct AgentRow: View {
             Spacer(minLength: 4)
             AgentStatusBadge(status: status, compact: true)
         }
-        .padding(.vertical, 2)
+        .padding(.vertical, Space.xs)
     }
 
     private var intentSummary: String? {
@@ -183,6 +191,7 @@ private struct AgentDetailView: View {
     let onOpenTroubleshooting: () -> Void
     let onOpenMigration: () -> Void
     let onOpenDetach: () -> Void
+    let onOpenBackupHistory: () -> Void
 
     var body: some View {
         ScrollView {
@@ -326,6 +335,13 @@ private struct AgentDetailView: View {
                 }
                 .help("Keychain ラッパ管理を外し、元の plist に戻す")
             }
+
+            Button {
+                onOpenBackupHistory()
+            } label: {
+                Label("バックアップ履歴", systemImage: "archivebox")
+            }
+            .help("plist 書き換え前に自動で取ったバックアップから復元する")
 
             Button {
                 onOpenTroubleshooting()
