@@ -15,6 +15,9 @@ build/
 DerivedData/
 *.moved-aside
 
+# xcodegen で生成するため .xcodeproj はコミットしない
+Tender.xcodeproj/
+
 # Xcode - Other
 *.pbxuser
 !default.pbxuser
