@@ -1,0 +1,58 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+Icon?
+
+# Xcode - User-specific
+xcuserdata/
+*.xcuserstate
+*.xcuserdatad/
+
+# Xcode - Build
+build/
+DerivedData/
+*.moved-aside
+
+# Xcode - Other
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+*.xccheckout
+*.xcscmblueprint
+timeline.xctimeline
+playground.xcworkspace
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Package.resolved
+
+# CocoaPods / Carthage (念のため)
+Pods/
+Carthage/Build/
+
+# IDE
+.idea/
+.vscode/
+
+# Secrets / env
+.env
+.env.local
+.env.*.local
+*.pem
+*.p12
+*.mobileprovision
+
+# Logs
+*.log
+
+# Misc
+tmp/
+temp/
