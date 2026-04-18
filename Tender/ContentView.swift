@@ -207,6 +207,8 @@ private struct AgentDetailView: View {
                     }
                 }
 
+                SecretWarningCard(detections: SecretDetector.detect(in: agent))
+
                 if !agent.environmentVariables.isEmpty {
                     DetailSection(title: "EnvironmentVariables") {
                         ForEach(agent.environmentVariables.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
