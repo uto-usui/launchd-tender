@@ -33,7 +33,7 @@ struct ContentView: View {
             )
         } else {
             List(store.agents, selection: $selection) { agent in
-                AgentRow(agent: agent)
+                AgentRow(agent: agent, status: store.status(for: agent))
                     .tag(agent.id)
             }
             .refreshable { await store.reload() }
@@ -45,7 +45,7 @@ struct ContentView: View {
     @ViewBuilder
     private var detail: some View {
         if let selection, let agent = store.agents.first(where: { $0.id == selection }) {
-            AgentDetailView(agent: agent)
+            AgentDetailView(agent: agent, status: store.status(for: agent))
         } else {
             ContentUnavailableView(
                 "ジョブを選択",
@@ -58,19 +58,24 @@ struct ContentView: View {
 
 private struct AgentRow: View {
     let agent: LaunchAgent
+    let status: AgentStatus
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(agent.label)
-                .font(.body)
-                .lineLimit(1)
-                .truncationMode(.middle)
-            if let summary = summaryLine {
-                Text(summary)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(agent.label)
+                    .font(.body)
                     .lineLimit(1)
+                    .truncationMode(.middle)
+                if let summary = summaryLine {
+                    Text(summary)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
             }
+            Spacer(minLength: 4)
+            AgentStatusBadge(status: status, compact: true)
         }
         .padding(.vertical, 2)
     }
@@ -94,13 +99,18 @@ private struct AgentRow: View {
 
 private struct AgentDetailView: View {
     let agent: LaunchAgent
+    let status: AgentStatus
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                Text(agent.label)
-                    .font(.title2).bold()
-                    .textSelection(.enabled)
+                HStack(alignment: .firstTextBaseline) {
+                    Text(agent.label)
+                        .font(.title2).bold()
+                        .textSelection(.enabled)
+                    Spacer()
+                    AgentStatusBadge(status: status)
+                }
 
                 if let sourcePath = agent.sourcePath {
                     Text(sourcePath.path)
