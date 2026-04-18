@@ -5,6 +5,7 @@ import TenderCore
 struct ContentView: View {
     @State private var store = LaunchAgentsStore()
     @State private var selection: LaunchAgent.ID?
+    @State private var troubleshootingAgent: LaunchAgent?
     @Query(sort: \Intent.label) private var allIntents: [Intent]
 
     private var intentsByLabel: [String: Intent] {
@@ -76,8 +77,17 @@ struct ContentView: View {
                 onEnable: { Task { await store.enable(agent) } },
                 onDisable: { Task { await store.disable(agent) } },
                 onKickstart: { Task { await store.kickstart(agent, kill: false) } },
-                onKickstartKill: { Task { await store.kickstart(agent, kill: true) } }
+                onKickstartKill: { Task { await store.kickstart(agent, kill: true) } },
+                onOpenTroubleshooting: { troubleshootingAgent = agent }
             )
+            .sheet(item: $troubleshootingAgent) { agent in
+                TroubleshootingSheet(
+                    agent: agent,
+                    status: store.status(for: agent)
+                ) {
+                    troubleshootingAgent = nil
+                }
+            }
         } else {
             ContentUnavailableView(
                 "ジョブを選択",
@@ -149,6 +159,7 @@ private struct AgentDetailView: View {
     let onDisable: () -> Void
     let onKickstart: () -> Void
     let onKickstartKill: () -> Void
+    let onOpenTroubleshooting: () -> Void
 
     var body: some View {
         ScrollView {
@@ -269,6 +280,13 @@ private struct AgentDetailView: View {
             }
 
             Spacer()
+
+            Button {
+                onOpenTroubleshooting()
+            } label: {
+                Label("障害切り分け", systemImage: "stethoscope")
+            }
+            .help("実行ファイル存在 / ログ末尾 / 秘密情報検出 / 復旧手順を 1 画面で確認")
         }
         .buttonStyle(.bordered)
     }
