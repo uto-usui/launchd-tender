@@ -103,11 +103,8 @@ private struct AgentRow: View {
     }
 
     private var summaryLine: String? {
-        if let interval = agent.startInterval {
-            return "StartInterval: \(interval)s"
-        }
-        if !agent.startCalendarInterval.isEmpty {
-            return "StartCalendarInterval (\(agent.startCalendarInterval.count) entries)"
+        if let nextRun = NextRunCalculator.nextRun(for: agent) {
+            return "次回 \(NextRunFormatter.shared.format(nextRun)) (推定)"
         }
         if !agent.watchPaths.isEmpty {
             return "WatchPaths: \(agent.watchPaths.count)"
@@ -149,6 +146,18 @@ private struct AgentDetailView: View {
                 actionBar
 
                 Divider()
+
+                if let nextRun = NextRunCalculator.nextRun(for: agent) {
+                    DetailSection(title: "次回実行（推定）") {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(nextRun.formatted(date: .abbreviated, time: .shortened))
+                                .font(.body)
+                            Text("スリープや前回実行のずれで実際の発火時刻は前後する。UI 表示は推定値。")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
 
                 if !agent.programArguments.isEmpty {
                     DetailSection(title: "ProgramArguments") {
