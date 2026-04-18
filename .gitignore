@@ -45,6 +45,9 @@ Carthage/Build/
 .idea/
 .vscode/
 
+# Claude Code ランタイム（agent の worktree などが入る）
+.claude/
+
 # Secrets / env
 .env
 .env.local
