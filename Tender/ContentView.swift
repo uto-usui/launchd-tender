@@ -16,6 +16,20 @@ struct ContentView: View {
         .task {
             await store.reload()
         }
+        .overlay(alignment: .top) {
+            if let result = store.lastActionResult {
+                ActionToastView(result: result) { store.dismissActionResult() }
+                    .task(id: result) {
+                        // 成功バナーは 3 秒で自動 dismiss。失敗は残して明示的に閉じさせる。
+                        guard result.isSuccess else { return }
+                        try? await Task.sleep(for: .seconds(3))
+                        if store.lastActionResult == result {
+                            store.dismissActionResult()
+                        }
+                    }
+            }
+        }
+        .animation(.spring(duration: 0.3), value: store.lastActionResult)
     }
 
     // MARK: - Sidebar
@@ -45,7 +59,15 @@ struct ContentView: View {
     @ViewBuilder
     private var detail: some View {
         if let selection, let agent = store.agents.first(where: { $0.id == selection }) {
-            AgentDetailView(agent: agent, status: store.status(for: agent))
+            AgentDetailView(
+                agent: agent,
+                status: store.status(for: agent),
+                runningAction: store.runningAction,
+                onEnable: { Task { await store.enable(agent) } },
+                onDisable: { Task { await store.disable(agent) } },
+                onKickstart: { Task { await store.kickstart(agent, kill: false) } },
+                onKickstartKill: { Task { await store.kickstart(agent, kill: true) } }
+            )
         } else {
             ContentUnavailableView(
                 "ジョブを選択",
@@ -100,6 +122,11 @@ private struct AgentRow: View {
 private struct AgentDetailView: View {
     let agent: LaunchAgent
     let status: AgentStatus
+    let runningAction: AgentActionKind?
+    let onEnable: () -> Void
+    let onDisable: () -> Void
+    let onKickstart: () -> Void
+    let onKickstartKill: () -> Void
 
     var body: some View {
         ScrollView {
@@ -118,6 +145,8 @@ private struct AgentDetailView: View {
                         .foregroundStyle(.secondary)
                         .textSelection(.enabled)
                 }
+
+                actionBar
 
                 Divider()
 
@@ -171,6 +200,46 @@ private struct AgentDetailView: View {
         if let w = entry.weekday { parts.append("W:\(w)") }
         if let mo = entry.month { parts.append("Mo:\(mo)") }
         return parts.isEmpty ? "(任意時刻)" : parts.joined(separator: " ")
+    }
+
+    @ViewBuilder
+    private var actionBar: some View {
+        HStack(spacing: 8) {
+            switch status {
+            case .disabled:
+                Button("有効化") { onEnable() }
+                    .disabled(runningAction != nil)
+            default:
+                Button("無効化") { onDisable() }
+                    .disabled(runningAction != nil)
+            }
+
+            Button {
+                onKickstart()
+            } label: {
+                Label("手動実行", systemImage: "play.fill")
+            }
+            .disabled(runningAction != nil)
+
+            Button {
+                onKickstartKill()
+            } label: {
+                Label("再起動", systemImage: "arrow.clockwise.circle")
+            }
+            .disabled(runningAction != nil)
+            .help("launchctl kickstart -k で既存プロセスを kill してから起動する")
+
+            if let running = runningAction {
+                ProgressView()
+                    .controlSize(.small)
+                Text("\(running.verb) 実行中…")
+                    .foregroundStyle(.secondary)
+                    .font(.caption)
+            }
+
+            Spacer()
+        }
+        .buttonStyle(.bordered)
     }
 }
 
