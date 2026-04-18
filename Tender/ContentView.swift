@@ -6,6 +6,8 @@ struct ContentView: View {
     @State private var store = LaunchAgentsStore()
     @State private var selection: LaunchAgent.ID?
     @State private var troubleshootingAgent: LaunchAgent?
+    @State private var migrationAgent: LaunchAgent?
+    @State private var detachAgent: LaunchAgent?
     @Query(sort: \Intent.label) private var allIntents: [Intent]
 
     private var intentsByLabel: [String: Intent] {
@@ -78,7 +80,9 @@ struct ContentView: View {
                 onDisable: { Task { await store.disable(agent) } },
                 onKickstart: { Task { await store.kickstart(agent, kill: false) } },
                 onKickstartKill: { Task { await store.kickstart(agent, kill: true) } },
-                onOpenTroubleshooting: { troubleshootingAgent = agent }
+                onOpenTroubleshooting: { troubleshootingAgent = agent },
+                onOpenMigration: { migrationAgent = agent },
+                onOpenDetach: { detachAgent = agent }
             )
             .sheet(item: $troubleshootingAgent) { agent in
                 TroubleshootingSheet(
@@ -86,6 +90,21 @@ struct ContentView: View {
                     status: store.status(for: agent)
                 ) {
                     troubleshootingAgent = nil
+                }
+            }
+            .sheet(item: $migrationAgent) { agent in
+                KeychainMigrationSheet(
+                    agent: agent,
+                    detections: SecretDetector.detect(in: agent)
+                ) {
+                    migrationAgent = nil
+                    Task { await store.reload() }
+                }
+            }
+            .sheet(item: $detachAgent) { agent in
+                KeychainDetachSheet(agent: agent) {
+                    detachAgent = nil
+                    Task { await store.reload() }
                 }
             }
         } else {
@@ -160,6 +179,8 @@ private struct AgentDetailView: View {
     let onKickstart: () -> Void
     let onKickstartKill: () -> Void
     let onOpenTroubleshooting: () -> Void
+    let onOpenMigration: () -> Void
+    let onOpenDetach: () -> Void
 
     var body: some View {
         ScrollView {
@@ -169,6 +190,9 @@ private struct AgentDetailView: View {
                         .font(.title2).bold()
                         .textSelection(.enabled)
                     Spacer()
+                    if agent.tenderManaged {
+                        TenderManagedBadge()
+                    }
                     AgentStatusBadge(status: status)
                 }
 
@@ -217,7 +241,10 @@ private struct AgentDetailView: View {
                     }
                 }
 
-                SecretWarningCard(detections: SecretDetector.detect(in: agent))
+                SecretWarningCard(
+                    detections: SecretDetector.detect(in: agent),
+                    onMigrate: onOpenMigration
+                )
 
                 if !agent.environmentVariables.isEmpty {
                     DetailSection(title: "EnvironmentVariables") {
@@ -280,6 +307,15 @@ private struct AgentDetailView: View {
             }
 
             Spacer()
+
+            if agent.tenderManaged {
+                Button {
+                    onOpenDetach()
+                } label: {
+                    Label("Keychain 解除", systemImage: "lock.open")
+                }
+                .help("Keychain ラッパ管理を外し、元の plist に戻す")
+            }
 
             Button {
                 onOpenTroubleshooting()
