@@ -6,6 +6,7 @@ enum AgentActionKind: Equatable {
     case disable
     case kickstart
     case kickstartKill  // -k で既存プロセス kill + 再起動
+    case reload  // bootout → bootstrap で plist 再読込
 
     var verb: String {
         switch self {
@@ -13,6 +14,7 @@ enum AgentActionKind: Equatable {
         case .disable: "無効化"
         case .kickstart: "手動実行"
         case .kickstartKill: "再起動"
+        case .reload: "再読込"
         }
     }
 }

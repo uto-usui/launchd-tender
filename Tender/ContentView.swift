@@ -80,6 +80,7 @@ struct ContentView: View {
                 onDisable: { Task { await store.disable(agent) } },
                 onKickstart: { Task { await store.kickstart(agent, kill: false) } },
                 onKickstartKill: { Task { await store.kickstart(agent, kill: true) } },
+                onReload: { Task { await store.reload(agent) } },
                 onOpenTroubleshooting: { troubleshootingAgent = agent },
                 onOpenMigration: { migrationAgent = agent },
                 onOpenDetach: { detachAgent = agent }
@@ -178,6 +179,7 @@ private struct AgentDetailView: View {
     let onDisable: () -> Void
     let onKickstart: () -> Void
     let onKickstartKill: () -> Void
+    let onReload: () -> Void
     let onOpenTroubleshooting: () -> Void
     let onOpenMigration: () -> Void
     let onOpenDetach: () -> Void
@@ -297,6 +299,14 @@ private struct AgentDetailView: View {
             }
             .disabled(runningAction != nil)
             .help("launchctl kickstart -k で既存プロセスを kill してから起動する")
+
+            Button {
+                onReload()
+            } label: {
+                Label("再読込", systemImage: "arrow.triangle.2.circlepath")
+            }
+            .disabled(runningAction != nil)
+            .help("launchctl bootout → bootstrap で plist を読み直す（編集後 / Keychain 移行後）")
 
             if let running = runningAction {
                 ProgressView()

@@ -98,6 +98,49 @@ final class LaunchAgentsStore {
         }
     }
 
+    /// plist 編集後 / Keychain 移行後に `bootout → bootstrap` で再読込する。
+    ///
+    /// `bootout` はロードされていない場合に失敗するが、その場合でも `bootstrap` は続行する
+    /// （失敗時 stderr を握り潰さず、最終結果のみトーストに出す）。
+    func reload(_ agent: LaunchAgent) async {
+        guard let plistPath = agent.sourcePath else {
+            lastActionResult = .failure(
+                label: agent.label, kind: .reload, exitCode: -1,
+                stderr: "plist の sourcePath が不明で再読込できない"
+            )
+            return
+        }
+
+        runningAction = .reload
+        defer { runningAction = nil }
+
+        // 1) bootout（失敗は黙認、未ロード状態からの再読込も成立させる）
+        _ = try? await launchctl.bootout(label: agent.label)
+
+        // 2) bootstrap（本番。失敗なら露出）
+        do {
+            let result = try await launchctl.bootstrap(plistPath: plistPath)
+            if result.isSuccess {
+                lastActionResult = .success(label: agent.label, kind: .reload)
+            } else {
+                lastActionResult = .failure(
+                    label: agent.label, kind: .reload,
+                    exitCode: result.exitCode, stderr: result.stderr
+                )
+            }
+        } catch {
+            logger.error("reload bootstrap failed for \(agent.label, privacy: .public): \(String(describing: error), privacy: .public)")
+            lastActionResult = .failure(
+                label: agent.label, kind: .reload, exitCode: -1,
+                stderr: String(describing: error)
+            )
+        }
+
+        if let disabled = await fetchDisabledLabels() {
+            self.disabledLabels = disabled
+        }
+    }
+
     // MARK: - Private
 
     private func performAction(
