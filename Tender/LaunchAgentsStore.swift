@@ -20,14 +20,34 @@ final class LaunchAgentsStore {
 
     private let scanner: LaunchAgentsScanner
     private let launchctl: any LaunchctlClient
+    private let watcher: LaunchAgentsWatcher
     private let logger = Logger(subsystem: "com.uto-usui.tender", category: "LaunchAgentsStore")
 
     init(
         scanner: LaunchAgentsScanner = LaunchAgentsScanner(),
-        launchctl: any LaunchctlClient = ProcessLaunchctlClient()
+        launchctl: any LaunchctlClient = ProcessLaunchctlClient(),
+        watcher: LaunchAgentsWatcher = LaunchAgentsWatcher()
     ) {
         self.scanner = scanner
         self.launchctl = launchctl
+        self.watcher = watcher
+        startWatching()
+    }
+
+    deinit {
+        watcher.stop()
+    }
+
+    private func startWatching() {
+        // watcher のコールバックは background queue で呼ばれる
+        // → Task @MainActor で reload() を呼ぶ。
+        // weak self により Store 寿命を超えたイベントは無視される。
+        // rapid-fire 時は reload() 側の isLoading ガードと idempotency に委ねる（debounce は YAGNI）。
+        watcher.start { [weak self] in
+            Task { @MainActor in
+                await self?.reload()
+            }
+        }
     }
 
     // MARK: - Loading
