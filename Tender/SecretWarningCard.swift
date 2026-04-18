@@ -7,6 +7,7 @@ import TenderCore
 /// 今は検出結果の可視化に徹する。
 struct SecretWarningCard: View {
     let detections: [SecretDetector.DetectedSecret]
+    var onMigrate: (() -> Void)? = nil
 
     var body: some View {
         if detections.isEmpty {
@@ -18,9 +19,18 @@ struct SecretWarningCard: View {
                         .foregroundStyle(.orange)
                     Text("平文の秘密情報が検出されました")
                         .font(.subheadline).bold()
+                    Spacer()
+                    if let onMigrate {
+                        Button {
+                            onMigrate()
+                        } label: {
+                            Label("Keychain へ移動", systemImage: "lock.shield")
+                        }
+                        .controlSize(.small)
+                    }
                 }
 
-                Text("EnvironmentVariables に書かれた値の prefix が既知のトークン形式と一致します。launchd は Keychain 参照記法を理解しないため、これらは将来 Keychain ラッパ経由に移す必要があります (Phase 6)。")
+                Text("EnvironmentVariables に書かれた値の prefix が既知のトークン形式と一致します。launchd は Keychain 参照記法を理解しないため、ラッパ script 経由で Keychain から読み出す形に移行できます。")
                     .font(.caption)
                     .foregroundStyle(.secondary)
 
