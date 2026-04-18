@@ -45,6 +45,21 @@ public actor KeychainMigrationService {
         self.fileWriter = fileWriter
     }
 
+    /// 本番アプリが使う wrapper script 保存ディレクトリ。
+    ///
+    /// `~/Library/Application Support/Tender/wrappers/` を返す。存在しなければ作成する。
+    public static func defaultWrapperDirectory() throws -> URL {
+        let appSupport = try FileManager.default.url(
+            for: .applicationSupportDirectory,
+            in: .userDomainMask, appropriateFor: nil, create: true
+        )
+        let dir = appSupport
+            .appendingPathComponent("Tender", isDirectory: true)
+            .appendingPathComponent("wrappers", isDirectory: true)
+        try FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir
+    }
+
     public func execute(plan: KeychainMigrationPlan) async throws -> Receipt {
         guard let sourceURL = plan.agent.sourcePath else {
             // Plan.make で弾いているので通常到達しない
