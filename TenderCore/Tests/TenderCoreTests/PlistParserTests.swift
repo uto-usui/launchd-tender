@@ -218,6 +218,48 @@ final class PlistParserTests: XCTestCase {
         XCTAssertEqual(agent.sourcePath, fileURL)
     }
 
+    // MARK: - Tender meta keys
+
+    func testParsesTenderMetaKeys() throws {
+        let xml = plistWrapping("""
+            <key>Label</key>
+            <string>com.example.managed</string>
+            <key>ProgramArguments</key>
+            <array>
+                <string>/bin/bash</string>
+                <string>/path/to/wrapper.sh</string>
+            </array>
+            <key>TenderManaged</key><true/>
+            <key>TenderWrappedEnvs</key>
+            <array>
+                <string>GH_TOKEN</string>
+                <string>SLACK_TOKEN</string>
+            </array>
+            <key>TenderOriginalProgramArguments</key>
+            <array>
+                <string>/usr/local/bin/poller</string>
+                <string>--once</string>
+            </array>
+        """)
+        let agent = try PlistParser.parse(Data(xml.utf8))
+
+        XCTAssertTrue(agent.tenderManaged)
+        XCTAssertEqual(agent.tenderWrappedEnvs, ["GH_TOKEN", "SLACK_TOKEN"])
+        XCTAssertEqual(agent.tenderOriginalProgramArguments, ["/usr/local/bin/poller", "--once"])
+    }
+
+    func testMissingTenderMetaKeysDefaultsToUnmanaged() throws {
+        let xml = plistWrapping("""
+            <key>Label</key><string>com.example.plain</string>
+            <key>ProgramArguments</key><array><string>/bin/true</string></array>
+        """)
+        let agent = try PlistParser.parse(Data(xml.utf8))
+
+        XCTAssertFalse(agent.tenderManaged)
+        XCTAssertTrue(agent.tenderWrappedEnvs.isEmpty)
+        XCTAssertTrue(agent.tenderOriginalProgramArguments.isEmpty)
+    }
+
     // MARK: - Helpers
 
     private func plistWrapping(_ body: String) -> String {

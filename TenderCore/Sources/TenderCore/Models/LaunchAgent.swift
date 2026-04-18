@@ -42,6 +42,15 @@ public struct LaunchAgent: Sendable, Hashable, Identifiable {
     /// plist ファイルの絶対パス（スキャナが埋める。パース単体では nil）。
     public let sourcePath: URL?
 
+    /// Tender が Keychain ラッパ移行済みとしてマークしたか（`TenderManaged` meta key）。
+    public let tenderManaged: Bool
+
+    /// Keychain へ移された env 名一覧（`TenderWrappedEnvs` meta key）。
+    public let tenderWrappedEnvs: [String]
+
+    /// 移行前の ProgramArguments（`TenderOriginalProgramArguments` meta key、復元用）。
+    public let tenderOriginalProgramArguments: [String]
+
     public init(
         label: String,
         programArguments: [String] = [],
@@ -57,7 +66,10 @@ public struct LaunchAgent: Sendable, Hashable, Identifiable {
         runAtLoad: Bool = false,
         keepAlive: KeepAlive = .disabled,
         launchOnlyOnce: Bool = false,
-        sourcePath: URL? = nil
+        sourcePath: URL? = nil,
+        tenderManaged: Bool = false,
+        tenderWrappedEnvs: [String] = [],
+        tenderOriginalProgramArguments: [String] = []
     ) {
         self.label = label
         self.programArguments = programArguments
@@ -74,6 +86,9 @@ public struct LaunchAgent: Sendable, Hashable, Identifiable {
         self.keepAlive = keepAlive
         self.launchOnlyOnce = launchOnlyOnce
         self.sourcePath = sourcePath
+        self.tenderManaged = tenderManaged
+        self.tenderWrappedEnvs = tenderWrappedEnvs
+        self.tenderOriginalProgramArguments = tenderOriginalProgramArguments
     }
 }
 

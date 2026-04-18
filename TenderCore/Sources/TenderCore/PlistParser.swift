@@ -47,7 +47,10 @@ public enum PlistParser {
             runAtLoad: dict["RunAtLoad"] as? Bool ?? false,
             keepAlive: parseKeepAlive(dict["KeepAlive"]),
             launchOnlyOnce: dict["LaunchOnlyOnce"] as? Bool ?? false,
-            sourcePath: sourcePath
+            sourcePath: sourcePath,
+            tenderManaged: dict["TenderManaged"] as? Bool ?? false,
+            tenderWrappedEnvs: dict["TenderWrappedEnvs"] as? [String] ?? [],
+            tenderOriginalProgramArguments: dict["TenderOriginalProgramArguments"] as? [String] ?? []
         )
     }
 
