@@ -105,6 +105,15 @@ public enum TenderSchemaV1: VersionedSchema {
     }
 }
 
+/// 現行スキーマの `Intent` 型エイリアス。V2 以降は新しい versioned type を指すように更新する。
+public typealias Intent = TenderSchemaV1.Intent
+
+/// 現行スキーマの `BackupEntry` 型エイリアス。
+public typealias BackupEntry = TenderSchemaV1.BackupEntry
+
+/// 現行スキーマの `ExecutionRecord` 型エイリアス。
+public typealias ExecutionRecord = TenderSchemaV1.ExecutionRecord
+
 /// `Intent.impactOnFailure` の表現。SwiftData 側は `String` で永続化し、UI 層でこの enum に写す。
 public enum ImpactOnFailure: String, Sendable, CaseIterable, Codable {
     case light

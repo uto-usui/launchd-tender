@@ -1,9 +1,15 @@
 import SwiftUI
+import SwiftData
 import TenderCore
 
 struct ContentView: View {
     @State private var store = LaunchAgentsStore()
     @State private var selection: LaunchAgent.ID?
+    @Query(sort: \Intent.label) private var allIntents: [Intent]
+
+    private var intentsByLabel: [String: Intent] {
+        Dictionary(uniqueKeysWithValues: allIntents.map { ($0.label, $0) })
+    }
 
     var body: some View {
         NavigationSplitView {
@@ -47,8 +53,12 @@ struct ContentView: View {
             )
         } else {
             List(store.agents, selection: $selection) { agent in
-                AgentRow(agent: agent, status: store.status(for: agent))
-                    .tag(agent.id)
+                AgentRow(
+                    agent: agent,
+                    status: store.status(for: agent),
+                    intentWhy: intentsByLabel[agent.label]?.why
+                )
+                .tag(agent.id)
             }
             .refreshable { await store.reload() }
         }
@@ -81,6 +91,7 @@ struct ContentView: View {
 private struct AgentRow: View {
     let agent: LaunchAgent
     let status: AgentStatus
+    let intentWhy: String?
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
@@ -89,9 +100,15 @@ private struct AgentRow: View {
                     .font(.body)
                     .lineLimit(1)
                     .truncationMode(.middle)
-                if let summary = summaryLine {
-                    Text(summary)
+                if let why = intentSummary {
+                    Text(why)
                         .font(.caption)
+                        .foregroundStyle(.primary)
+                        .lineLimit(1)
+                }
+                if let schedule = scheduleLine {
+                    Text(schedule)
+                        .font(.caption2)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
                 }
@@ -102,7 +119,15 @@ private struct AgentRow: View {
         .padding(.vertical, 2)
     }
 
-    private var summaryLine: String? {
+    private var intentSummary: String? {
+        guard let why = intentWhy?.trimmingCharacters(in: .whitespacesAndNewlines), !why.isEmpty else {
+            return nil
+        }
+        // 改行は空白に畳む。UI 側では truncationMode 頼みで末尾省略。
+        return why.replacingOccurrences(of: "\n", with: " ")
+    }
+
+    private var scheduleLine: String? {
         if let nextRun = NextRunCalculator.nextRun(for: agent) {
             return "次回 \(NextRunFormatter.shared.format(nextRun)) (推定)"
         }
@@ -193,6 +218,8 @@ private struct AgentDetailView: View {
                         }
                     }
                 }
+
+                IntentEditorView(label: agent.label)
 
                 if let sourcePath = agent.sourcePath {
                     PlistRawViewer(url: sourcePath)
