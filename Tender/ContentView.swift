@@ -200,9 +200,8 @@ private struct AgentDetailView: View {
 
                 if !agent.startCalendarInterval.isEmpty {
                     DetailSection(title: "StartCalendarInterval") {
-                        ForEach(Array(agent.startCalendarInterval.enumerated()), id: \.offset) { _, entry in
-                            Text(describe(entry))
-                                .font(.body.monospaced())
+                        ForEach(Array(StartCalendarFormatter.format(agent.startCalendarInterval).enumerated()), id: \.offset) { _, line in
+                            Text(line)
                         }
                     }
                 }
@@ -232,16 +231,6 @@ private struct AgentDetailView: View {
             .padding(24)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-    }
-
-    private func describe(_ entry: StartCalendarEntry) -> String {
-        var parts: [String] = []
-        if let h = entry.hour { parts.append("H:\(h)") }
-        if let m = entry.minute { parts.append("M:\(m)") }
-        if let d = entry.day { parts.append("D:\(d)") }
-        if let w = entry.weekday { parts.append("W:\(w)") }
-        if let mo = entry.month { parts.append("Mo:\(mo)") }
-        return parts.isEmpty ? "(任意時刻)" : parts.joined(separator: " ")
     }
 
     @ViewBuilder
