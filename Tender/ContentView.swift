@@ -194,6 +194,10 @@ private struct AgentDetailView: View {
                     }
                 }
 
+                if let sourcePath = agent.sourcePath {
+                    PlistRawViewer(url: sourcePath)
+                }
+
                 Spacer()
             }
             .padding(24)
