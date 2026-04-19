@@ -83,6 +83,8 @@ struct ContentView: View {
 
     @ViewBuilder
     private var detail: some View {
+        // 検索中に選択行が filteredAgents から外れても、detail は store.agents から引き続き解決する。
+        // 打鍵ごとに詳細ペインが消えるのを避けるため意図的にフィルタ外で resolve している。
         if let selection, let agent = store.agents.first(where: { $0.id == selection }) {
             AgentDetailView(
                 agent: agent,
