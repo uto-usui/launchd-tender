@@ -1,11 +1,13 @@
 import SwiftUI
 import Foundation
+import TenderCore
 
 /// plist の raw 内容を SF Mono で表示する read-only ビューア。
 ///
 /// - XML plist はそのまま表示
 /// - binary plist は一度デシリアライズ → XML に戻して表示
 /// - 読み込み失敗はエラー文言を表示
+/// - `FileTailWatcher` でファイル変更に追従、Tender 自身の編集 / 外部 vim からの書き換えどちらも反映
 struct PlistRawViewer: View {
     let url: URL
 
@@ -17,7 +19,27 @@ struct PlistRawViewer: View {
                 .padding(.top, Space.sm)
         }
         .task(id: url) {
-            await load()
+            await watchLoop()
+        }
+    }
+
+    /// 初回読み込み → FSEvents 監視による再読み込みループ。
+    /// `.task(id: url)` が cancel されると AsyncStream も終わり watcher.stop が走る。
+    private func watchLoop() async {
+        content = .loading
+        content = await Self.readContent(from: url)
+
+        let stream = AsyncStream<Void> { continuation in
+            let watcher = FileTailWatcher(fileURL: url)
+            watcher.start { continuation.yield() }
+            continuation.onTermination = { _ in watcher.stop() }
+        }
+        for await _ in stream {
+            if Task.isCancelled { break }
+            // 書き込み中に一瞬空で読まれるのを避ける debounce
+            try? await Task.sleep(for: .milliseconds(150))
+            if Task.isCancelled { break }
+            content = await Self.readContent(from: url)
         }
     }
 
@@ -45,12 +67,6 @@ struct PlistRawViewer: View {
                 .foregroundStyle(.red)
                 .textSelection(.enabled)
         }
-    }
-
-    private func load() async {
-        content = .loading
-        let loaded = await Self.readContent(from: url)
-        self.content = loaded
     }
 
     // MARK: - File loading
