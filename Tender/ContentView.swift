@@ -372,7 +372,7 @@ private struct DetailSection<Content: View>: View {
     @ViewBuilder var content: Content
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: Space.sm) {
             Text(title)
                 .font(.caption)
                 .foregroundStyle(.secondary)
