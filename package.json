@@ -1,0 +1,16 @@
+{
+  "name": "launchd-tender",
+  "private": true,
+  "description": "Task runner shim for the macOS Tender app. Actual build uses xcodegen + xcodebuild.",
+  "scripts": {
+    "gen": "xcodegen generate",
+    "build": "xcodebuild -project Tender.xcodeproj -scheme Tender build",
+    "rebuild": "pnpm run gen && pnpm run build",
+    "test": "cd TenderCore && swift test",
+    "open": "sh -c 'open \"$(ls -d $HOME/Library/Developer/Xcode/DerivedData/Tender-*/Build/Products/Debug/Tender.app | head -1)\"'",
+    "install-symlink": "sh -c 'mkdir -p $HOME/Applications && APP=$(ls -d $HOME/Library/Developer/Xcode/DerivedData/Tender-*/Build/Products/Debug/Tender.app | head -1) && ln -sfn \"$APP\" $HOME/Applications/Tender.app'",
+    "register": "sh -c '/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f $HOME/Applications/Tender.app && mdimport $HOME/Applications/Tender.app'",
+    "install-app": "pnpm run rebuild && pnpm run install-symlink && pnpm run register",
+    "clean": "rm -rf Tender.xcodeproj .build TenderCore/.build"
+  }
+}

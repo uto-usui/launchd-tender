@@ -23,24 +23,29 @@
 ## インストール
 
 ```bash
-# 1. プロジェクト生成 + ビルド
-brew install xcodegen
-xcodegen generate
-xcodebuild -project Tender.xcodeproj -scheme Tender build
-
-# 2. ~/Applications に symlink を置いて Spotlight / Raycast / Launchpad から起動できるようにする
-APP=$(ls -d ~/Library/Developer/Xcode/DerivedData/Tender-*/Build/Products/Debug/Tender.app | head -1)
-mkdir -p ~/Applications
-ln -s "$APP" ~/Applications/Tender.app
-
-# 3. Launch Services / Spotlight に登録
-/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f ~/Applications/Tender.app
-mdimport ~/Applications/Tender.app
+brew install xcodegen            # 初回のみ
+pnpm run install-app             # xcodegen → xcodebuild → ~/Applications に symlink → Launch Services 登録
 ```
 
 Raycast でヒットしないときは Raycast を再起動（`⌃⌘R` or Quit & Reopen）。以降は Xcode で Build するたびに symlink 先が最新になる。
 
-コードを編集するなら `open Tender.xcodeproj` で Xcode へ。テストは `cd TenderCore && swift test`（176 ケース）。
+### 個別タスク
+
+`package.json` の scripts。`pnpm run <name>` で実行。
+
+| script | 内容 |
+|---|---|
+| `gen` | `xcodegen generate`（`project.yml` → `Tender.xcodeproj`） |
+| `build` | `xcodebuild -scheme Tender build` |
+| `rebuild` | `gen` → `build` |
+| `test` | `cd TenderCore && swift test`（ロジック層、187 ケース） |
+| `open` | ビルド済み `.app` を直接起動 |
+| `install-symlink` | `~/Applications/Tender.app` への symlink を貼り直す |
+| `register` | Launch Services / Spotlight に登録 |
+| `install-app` | `rebuild` + `install-symlink` + `register` を直列実行 |
+| `clean` | 生成物（`Tender.xcodeproj` / `.build`）を削除 |
+
+コード編集するなら `open Tender.xcodeproj` で Xcode へ。
 
 ## 機能（現状）
 
