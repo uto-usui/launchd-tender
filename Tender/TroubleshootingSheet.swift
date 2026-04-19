@@ -366,7 +366,7 @@ private struct LogTailView: View {
                     .foregroundStyle(.red)
             }
         }
-        .task(id: path) { await load() }
+        .task(id: path) { await tailLoop() }
     }
 
     private func isErrorLine(_ line: String) -> Bool {
@@ -374,9 +374,27 @@ private struct LogTailView: View {
         return lower.contains("error") || lower.contains(" err ") || lower.hasPrefix("err:")
     }
 
-    private func load() async {
+    /// 初回 load + FSEvents による再 load ループ。
+    /// `.task(id: path)` が cancel されたら AsyncStream も終了し、watcher が stop される。
+    private func tailLoop() async {
         state = .loading
         state = await Self.readTail(path: path, maxLines: maxLines)
+
+        let fileURL = URL(fileURLWithPath: path)
+        // watcher のイベントを `AsyncStream<Void>` に流し、debounce しつつ再 load。
+        let stream = AsyncStream<Void> { continuation in
+            let watcher = FileTailWatcher(fileURL: fileURL)
+            watcher.start { continuation.yield() }
+            continuation.onTermination = { _ in watcher.stop() }
+        }
+
+        for await _ in stream {
+            if Task.isCancelled { break }
+            // 連続イベントは 150ms debounce（launchd 起動直後の複数書き込みを 1 回にまとめる）
+            try? await Task.sleep(for: .milliseconds(150))
+            if Task.isCancelled { break }
+            state = await Self.readTail(path: path, maxLines: maxLines)
+        }
     }
 
     private static func readTail(path: String, maxLines: Int) async -> LoadState {
