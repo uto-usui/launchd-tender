@@ -9,6 +9,7 @@ struct ContentView: View {
     @State private var migrationAgent: LaunchAgent?
     @State private var detachAgent: LaunchAgent?
     @State private var backupHistoryAgent: LaunchAgent?
+    @State private var scheduleEditorAgent: LaunchAgent?
     @State private var searchText = ""
     @Query(sort: \Intent.label) private var allIntents: [Intent]
 
@@ -98,7 +99,8 @@ struct ContentView: View {
                 onOpenTroubleshooting: { troubleshootingAgent = agent },
                 onOpenMigration: { migrationAgent = agent },
                 onOpenDetach: { detachAgent = agent },
-                onOpenBackupHistory: { backupHistoryAgent = agent }
+                onOpenBackupHistory: { backupHistoryAgent = agent },
+                onOpenScheduleEditor: { scheduleEditorAgent = agent }
             )
             .sheet(item: $troubleshootingAgent) { agent in
                 TroubleshootingSheet(
@@ -126,6 +128,12 @@ struct ContentView: View {
             .sheet(item: $backupHistoryAgent) { agent in
                 BackupHistorySheet(agent: agent) {
                     backupHistoryAgent = nil
+                    Task { await store.reload() }
+                }
+            }
+            .sheet(item: $scheduleEditorAgent) { agent in
+                ScheduleEditorSheet(agent: agent) {
+                    scheduleEditorAgent = nil
                     Task { await store.reload() }
                 }
             }
@@ -205,6 +213,7 @@ private struct AgentDetailView: View {
     let onOpenMigration: () -> Void
     let onOpenDetach: () -> Void
     let onOpenBackupHistory: () -> Void
+    let onOpenScheduleEditor: () -> Void
 
     var body: some View {
         ScrollView {
@@ -251,6 +260,20 @@ private struct AgentDetailView: View {
                     }
                 }
 
+                HStack(alignment: .firstTextBaseline) {
+                    Text("スケジュール")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .textCase(.uppercase)
+                    Spacer()
+                    Button {
+                        onOpenScheduleEditor()
+                    } label: {
+                        Label("編集", systemImage: "pencil")
+                    }
+                    .controlSize(.small)
+                }
+
                 if let interval = agent.startInterval {
                     DetailSection(title: "StartInterval") {
                         Text("\(interval) 秒")
@@ -263,6 +286,12 @@ private struct AgentDetailView: View {
                             Text(line)
                         }
                     }
+                }
+
+                if agent.startInterval == nil && agent.startCalendarInterval.isEmpty {
+                    Text("StartInterval / StartCalendarInterval なし (RunAtLoad / WatchPaths 等のトリガに委任)")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
 
                 EnvironmentVariablesSection(
