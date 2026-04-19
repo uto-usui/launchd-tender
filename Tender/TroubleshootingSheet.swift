@@ -40,6 +40,7 @@ struct TroubleshootingSheet: View {
                     environmentSection
                     outputsSection
                     logsSection
+                    unifiedLogSection
                     secretsSection
                     nextRunSection
                     intentRecoverySection
@@ -181,6 +182,12 @@ struct TroubleshootingSheet: View {
                         .foregroundStyle(.secondary)
                 }
             }
+        }
+    }
+
+    private var unifiedLogSection: some View {
+        sectionCard(title: "Unified Log (log show)") {
+            UnifiedLogView(agent: agent)
         }
     }
 
