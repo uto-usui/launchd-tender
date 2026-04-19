@@ -265,22 +265,11 @@ private struct AgentDetailView: View {
                     }
                 }
 
-                SecretWarningCard(
+                EnvironmentVariablesSection(
+                    agent: agent,
                     detections: SecretDetector.detect(in: agent),
                     onMigrate: onOpenMigration
                 )
-
-                if !agent.environmentVariables.isEmpty {
-                    DetailSection(title: "EnvironmentVariables") {
-                        ForEach(agent.environmentVariables.sorted(by: { $0.key < $1.key }), id: \.key) { key, value in
-                            HStack(alignment: .firstTextBaseline) {
-                                Text(key).font(.body.monospaced().bold())
-                                Text("=").foregroundStyle(.secondary)
-                                Text(value).font(.body.monospaced()).textSelection(.enabled)
-                            }
-                        }
-                    }
-                }
 
                 IntentEditorView(label: agent.label)
 

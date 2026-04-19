@@ -199,7 +199,15 @@ struct TroubleshootingSheet: View {
                     .font(.caption)
                     .foregroundStyle(.secondary)
             } else {
-                SecretWarningCard(detections: detections)
+                VStack(alignment: .leading, spacing: Space.xs) {
+                    Label("\(detections.count) 件の平文トークンを検出 (推定)", systemImage: "exclamationmark.shield.fill")
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.yellow)
+                        .font(.subheadline)
+                    Text("詳細は Environment Variables セクションを参照。Keychain への移行は詳細ペイン右上のボタンから。")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
             }
         }
     }
