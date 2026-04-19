@@ -326,12 +326,18 @@ macOS 25 以下は material の境界線に任せる。
 - VoiceOver: 全アクティブ要素に `accessibilityLabel`
 - **Reduce Motion**: `symbolEffect` と `.spring` の両方を条件付きで無効化
 - **Increase Contrast**: システム設定を尊重、独自コントラスト加工はしない
-- キーボードショートカット（案）
-  - `⌘F` 検索
-  - `⌘R` リロード
-  - `⌘E` 有効/無効トグル
+- キーボードショートカット（Phase 1 確定）
+  - `⌘F` サイドバー検索フォーカス
+  - `⌘R` 再読込 (bootout → bootstrap)
   - `⌘K` 手動実行 (kickstart)
-  - `⌘D` 障害切り分け (diagnose)
+  - `⌘⇧K` 再起動 (kickstart -k)
+  - `⌘⇧E` 有効/無効トグル
+  - `⌘⇧D` 障害切り分け
+
+  修飾キー原則: `⌘` = 一般 / `⌘⇧` = 破壊的・状態書換 / `⌘⌥` = 参照系。
+  参照系のうち最頻出 1 つ（障害切り分け）は `⌘⇧D` に昇格する例外を許す。
+
+  Phase 2（余裕があれば）: `⌘⌥B` バックアップ履歴 / `⌘⇧M` Keychain 移行 / `⌘⇧U` Keychain 解除。
 
 ---
 
@@ -360,9 +366,7 @@ Icon Composer で macOS 26 スタイル、15.7 向けフォールバック別書
 ## 今決めないこと (TBD)
 
 - メニューバーアイコン（v2 検討）
-- キーボードショートカット最終割当（上記は案）
-- App Icon 最終デザイン（Icon Composer 実作業で詰める）
-- 平文 secret 検出 UI の具体レイアウト
+- App Icon 最終デザイン（Icon Composer 実作業で詰める — 方向性は `docs/design/app-icon-brief.md`）
 
 ---
 
