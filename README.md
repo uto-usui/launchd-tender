@@ -36,6 +36,23 @@ cd TenderCore && swift test
 
 Xcode で開くなら `open Tender.xcodeproj`。
 
+### 普段使いする場合
+
+Debug ビルドを `~/Applications/` にシンボリックリンクして Spotlight / Raycast / Launchpad から起動できるようにする。
+
+```bash
+# 初回のみ
+APP=$(ls -d ~/Library/Developer/Xcode/DerivedData/Tender-*/Build/Products/Debug/Tender.app | head -1)
+mkdir -p ~/Applications
+ln -s "$APP" ~/Applications/Tender.app
+
+# Launch Services / Spotlight に認識させる
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f ~/Applications/Tender.app
+mdimport ~/Applications/Tender.app
+```
+
+Raycast でヒットしないときは Raycast を再起動（`⌃⌘R` or Quit & Reopen）。以降は Xcode で Build するたびにリンク先が更新される。
+
 ## 機能（現状）
 
 ### 観察
