@@ -303,10 +303,12 @@ private struct AgentDetailView: View {
                 Button("有効化") { onEnable() }
                     .buttonStyle(.borderedProminent)
                     .disabled(runningAction != nil)
+                    .keyboardShortcut("e", modifiers: [.command, .shift])
             default:
                 Button("無効化") { onDisable() }
                     .buttonStyle(.borderedProminent)
                     .disabled(runningAction != nil)
+                    .keyboardShortcut("e", modifiers: [.command, .shift])
             }
 
             Button {
@@ -316,6 +318,7 @@ private struct AgentDetailView: View {
             }
             .buttonStyle(.borderedProminent)
             .disabled(runningAction != nil)
+            .keyboardShortcut("k", modifiers: .command)
 
             Button {
                 onKickstartKill()
@@ -323,6 +326,7 @@ private struct AgentDetailView: View {
                 Label("再起動", systemImage: "arrow.trianglehead.clockwise")
             }
             .disabled(runningAction != nil)
+            .keyboardShortcut("k", modifiers: [.command, .shift])
             .help("launchctl kickstart -k で既存プロセスを kill してから起動する")
 
             Button {
@@ -331,6 +335,7 @@ private struct AgentDetailView: View {
                 Label("再読込", systemImage: "arrow.trianglehead.2.clockwise")
             }
             .disabled(runningAction != nil)
+            .keyboardShortcut("r", modifiers: .command)
             .help("launchctl bootout → bootstrap で plist を読み直す（編集後 / Keychain 移行後）")
 
             if let running = runningAction {
@@ -364,6 +369,7 @@ private struct AgentDetailView: View {
             } label: {
                 Label("障害切り分け", systemImage: "stethoscope")
             }
+            .keyboardShortcut("d", modifiers: [.command, .shift])
             .help("実行ファイル存在 / ログ末尾 / 秘密情報検出 / 復旧手順を 1 画面で確認")
         }
         .buttonStyle(.bordered)
