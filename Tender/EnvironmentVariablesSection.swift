@@ -32,7 +32,6 @@ struct EnvironmentVariablesSection: View {
         }
     }
 
-    @ViewBuilder
     private var header: some View {
         HStack(alignment: .firstTextBaseline, spacing: Space.sm) {
             Text("EnvironmentVariables")
@@ -59,7 +58,6 @@ struct EnvironmentVariablesSection: View {
         }
     }
 
-    @ViewBuilder
     private func row(key: String, value: String, isDetected: Bool) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: Space.xs) {
             if isDetected {
@@ -72,6 +70,7 @@ struct EnvironmentVariablesSection: View {
                 Image(systemName: "exclamationmark.shield.fill")
                     .font(.caption2)
                     .opacity(0)
+                    .accessibilityHidden(true)
             }
             Text(key).font(.body.monospaced().bold())
             Text("=").foregroundStyle(.secondary)
