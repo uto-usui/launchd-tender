@@ -114,7 +114,3 @@ TenderCore/                 # ローカル Swift Package（テスト可能なド
 6. 次回実行時刻は推定値（UI に「推定」ラベル）
 7. TCC / Full Disk Access の要求は最小限（他ユーザーの plist は読まない）
 
-## ドッグフード対象
-
-- `***REDACTED***` — 毎日 JST 8:00 / 17:00 に git pull
-- `***REDACTED***` — 1 時間おき（GH_TOKEN 平文問題あり → Keychain 連携の実証ケース）
