@@ -94,10 +94,6 @@ TenderCore/                 # ローカル Swift Package（テスト可能なド
 
 - [CLAUDE.md](./CLAUDE.md) — エージェント向けプロジェクト指示・ガードレール
 - [DESIGN.md](./DESIGN.md) — UI デザインガイドライン
-- [設計メモ v2](./ai/todo/design.md) — 技術選定・機能仕様・議論の経緯
-- [タスクリスト](./ai/todo/tasks.md) — Phase 1〜7 の実装状況
-- [docs/plans/](./docs/plans/) — Phase ごとの design doc / implementation plan
-- [参考: azu/launchd-ui](./ai/todo/reference-launchd-ui.md) — 先行実装（Tauri + React 版）
 
 ## スコープ
 

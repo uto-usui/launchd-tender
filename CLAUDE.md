@@ -58,10 +58,8 @@ launchd-tender/
 
 実装前に必ず読む:
 
-- [設計メモ v2](./ai/todo/design.md) — 技術選定・機能仕様・ガードレール・議論の経緯
 - [UI デザインガイドライン](./DESIGN.md) — レイアウト・カラー・タイポグラフィ
-- [実装 TODO リスト](./ai/todo/tasks.md) — Phase 1〜7 の具体タスク
-- [参考: azu/launchd-ui](./ai/todo/reference-launchd-ui.md) — 先行実装（Tauri 版）の紹介記事
+- 設計メモ・TODO・Phase 計画は `ai/todo/` / `docs/plans/`（ローカルのみ、gitignore 済み）
 
 ## 開発方針
 
@@ -90,13 +88,6 @@ launchd-tender/
 
 コミットは `/contextual-commit` スキル経由で。WHY と意図を本文に残す。
 
-## ドッグフード対象
-
-開発中は自分の実ジョブで動作確認:
-
-- `***REDACTED***` — 毎日 JST 8:00 / 17:00
-- `***REDACTED***` — 1時間おき（**GHトークン平文問題あり、Keychain 連携の実証ケース**）
-
 ## やらないこと
 
 - 市場差別化・ポジショニング議論
@@ -107,4 +98,4 @@ launchd-tender/
 
 ---
 
-ドキュメント間で矛盾があれば、**この CLAUDE.md と `ai/todo/design.md` を優先**。
+ドキュメント間で矛盾があれば、**この CLAUDE.md とローカルの `ai/todo/design.md` を優先**。
