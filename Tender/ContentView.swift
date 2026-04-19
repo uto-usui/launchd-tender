@@ -39,7 +39,7 @@ struct ContentView: View {
                     }
             }
         }
-        .animation(.spring(duration: 0.3), value: store.lastActionResult)
+        .animation(.spring(response: 0.3, dampingFraction: 0.85), value: store.lastActionResult)
     }
 
     // MARK: - Sidebar
@@ -119,7 +119,7 @@ struct ContentView: View {
         } else {
             ContentUnavailableView(
                 "ジョブを選択",
-                systemImage: "gearshape.2",
+                systemImage: "leaf.circle",
                 description: Text("サイドバーから LaunchAgent を選んでください。")
             )
         }
@@ -284,27 +284,30 @@ private struct AgentDetailView: View {
 
     @ViewBuilder
     private var actionBar: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: Space.sm) {
             switch status {
             case .disabled:
                 Button("有効化") { onEnable() }
+                    .buttonStyle(.borderedProminent)
                     .disabled(runningAction != nil)
             default:
                 Button("無効化") { onDisable() }
+                    .buttonStyle(.borderedProminent)
                     .disabled(runningAction != nil)
             }
 
             Button {
                 onKickstart()
             } label: {
-                Label("手動実行", systemImage: "play.fill")
+                Label("手動実行", systemImage: "play.circle.fill")
             }
+            .buttonStyle(.borderedProminent)
             .disabled(runningAction != nil)
 
             Button {
                 onKickstartKill()
             } label: {
-                Label("再起動", systemImage: "arrow.clockwise.circle")
+                Label("再起動", systemImage: "arrow.trianglehead.clockwise")
             }
             .disabled(runningAction != nil)
             .help("launchctl kickstart -k で既存プロセスを kill してから起動する")
@@ -312,7 +315,7 @@ private struct AgentDetailView: View {
             Button {
                 onReload()
             } label: {
-                Label("再読込", systemImage: "arrow.triangle.2.circlepath")
+                Label("再読込", systemImage: "arrow.trianglehead.2.clockwise")
             }
             .disabled(runningAction != nil)
             .help("launchctl bootout → bootstrap で plist を読み直す（編集後 / Keychain 移行後）")
@@ -339,7 +342,7 @@ private struct AgentDetailView: View {
             Button {
                 onOpenBackupHistory()
             } label: {
-                Label("バックアップ履歴", systemImage: "archivebox")
+                Label("バックアップ履歴", systemImage: "clock.arrow.trianglehead.counterclockwise.rotate.90")
             }
             .help("plist 書き換え前に自動で取ったバックアップから復元する")
 
@@ -351,6 +354,7 @@ private struct AgentDetailView: View {
             .help("実行ファイル存在 / ログ末尾 / 秘密情報検出 / 復旧手順を 1 画面で確認")
         }
         .buttonStyle(.bordered)
+        .symbolRenderingMode(.hierarchical)
     }
 }
 

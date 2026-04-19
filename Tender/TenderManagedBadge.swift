@@ -6,15 +6,15 @@ struct TenderManagedBadge: View {
         Label("Keychain 管理済", systemImage: "lock.shield.fill")
             .labelStyle(.titleAndIcon)
             .font(.caption)
-            .padding(.horizontal, 8)
+            .padding(.horizontal, Space.sm)
             .padding(.vertical, 2)
             .background(
-                Capsule().fill(.purple.opacity(0.12))
+                Capsule().fill(.gray.opacity(0.12))
             )
             .overlay(
-                Capsule().strokeBorder(.purple.opacity(0.4), lineWidth: 0.5)
+                Capsule().strokeBorder(.gray.opacity(0.4), lineWidth: 0.5)
             )
-            .foregroundStyle(.purple)
+            .foregroundStyle(.secondary)
             .help("ProgramArguments は wrapper script 経由で Keychain から値を読み出している")
     }
 }

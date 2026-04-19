@@ -178,7 +178,9 @@ struct KeychainMigrationSheet: View {
                     .foregroundStyle(.secondary)
                 ForEach(plan.keychainWrites, id: \.account) { write in
                     HStack(spacing: 4) {
-                        Image(systemName: "key.fill").foregroundStyle(Color.accentColor)
+                        Image(systemName: "key.fill")
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(.secondary)
                             .font(.caption2)
                         Text("\(write.service) / \(write.account)")
                             .font(.caption.monospaced())
@@ -224,7 +226,7 @@ struct KeychainMigrationSheet: View {
             Text(plan.wrapperScript)
                 .font(.body.monospaced())
                 .textSelection(.enabled)
-                .padding(10)
+                .padding(Space.md)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
                     RoundedRectangle(cornerRadius: 6)
@@ -243,7 +245,7 @@ struct KeychainMigrationSheet: View {
                 .foregroundStyle(.secondary)
                 .textSelection(.enabled)
         }
-        .padding(10)
+        .padding(Space.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 6)

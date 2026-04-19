@@ -94,7 +94,7 @@ struct KeychainDetachSheet: View {
                 .disabled(phase != .preview)
             }
         }
-        .padding(20)
+        .padding(Space.xl)
         .frame(minWidth: 520, minHeight: 380)
     }
 

@@ -38,7 +38,7 @@ struct IntentEditorView: View {
                 recoveryField
                 footer
             }
-            .padding(.top, 6)
+            .padding(.top, Space.sm)
         }
         .onAppear {
             hydrate(from: matches.first)

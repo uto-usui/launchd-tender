@@ -13,6 +13,7 @@ struct AgentStatusBadge: View {
             }
         } icon: {
             Image(systemName: symbol)
+                .symbolRenderingMode(.hierarchical)
                 .foregroundStyle(tint)
         }
         .labelStyle(.titleAndIcon)
@@ -23,9 +24,9 @@ struct AgentStatusBadge: View {
 
     private var symbol: String {
         switch status {
-        case .enabled: "checkmark.circle.fill"
-        case .disabled: "minus.circle.fill"
-        case .missingExecutable: "questionmark.circle.fill"
+        case .enabled: "leaf.fill"
+        case .disabled: "pause.circle.fill"
+        case .missingExecutable: "questionmark.circle"
         case .notExecutable: "lock.circle.fill"
         case .noProgramArguments: "exclamationmark.triangle.fill"
         }
@@ -35,7 +36,7 @@ struct AgentStatusBadge: View {
         switch status {
         case .enabled: .green
         case .disabled: .secondary
-        case .missingExecutable, .notExecutable, .noProgramArguments: .orange
+        case .missingExecutable, .notExecutable, .noProgramArguments: .yellow
         }
     }
 

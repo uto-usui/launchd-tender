@@ -14,7 +14,7 @@ struct PlistRawViewer: View {
     var body: some View {
         DisclosureGroup("plist ファイル (raw)") {
             contentView
-                .padding(.top, 6)
+                .padding(.top, Space.sm)
         }
         .task(id: url) {
             await load()

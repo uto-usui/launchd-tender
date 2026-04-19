@@ -16,7 +16,8 @@ struct SecretWarningCard: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Image(systemName: "exclamationmark.shield.fill")
-                        .foregroundStyle(.orange)
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.yellow)
                     Text("平文の秘密情報が検出されました")
                         .font(.subheadline).bold()
                     Spacer()
@@ -37,7 +38,8 @@ struct SecretWarningCard: View {
                 ForEach(detections, id: \.key) { detection in
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
                         Image(systemName: "key.fill")
-                            .foregroundStyle(.orange)
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(.yellow)
                             .font(.caption2)
                         Text(detection.key)
                             .font(.body.monospaced().bold())
@@ -55,11 +57,11 @@ struct SecretWarningCard: View {
             .padding(12)
             .background(
                 RoundedRectangle(cornerRadius: 10)
-                    .fill(.orange.opacity(0.08))
+                    .fill(.yellow.opacity(0.08))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(.orange.opacity(0.4), lineWidth: 1)
+                    .strokeBorder(.yellow.opacity(0.4), lineWidth: 1)
             )
         }
     }

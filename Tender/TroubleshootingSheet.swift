@@ -69,8 +69,8 @@ struct TroubleshootingSheet: View {
             Button("閉じる", action: onClose)
                 .keyboardShortcut(.cancelAction)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
+        .padding(.horizontal, Space.xl)
+        .padding(.vertical, Space.md)
     }
 
     // MARK: - Sections
@@ -148,7 +148,7 @@ struct TroubleshootingSheet: View {
                 if agent.standardOutPath == nil && agent.standardErrorPath == nil {
                     Text("両方とも未設定のため、ログは Unified Log (`log show --predicate 'process == \"\(executableName)\"'`) で追う必要があります。")
                         .font(.caption)
-                        .foregroundStyle(.orange)
+                        .foregroundStyle(.yellow)
                 }
             }
         }
@@ -161,7 +161,7 @@ struct TroubleshootingSheet: View {
         } else {
             HStack(alignment: .firstTextBaseline) {
                 Text(label).font(.caption).foregroundStyle(.secondary).textCase(.uppercase)
-                Text("(未設定)").foregroundStyle(.orange)
+                Text("(未設定)").foregroundStyle(.yellow)
             }
         }
     }
