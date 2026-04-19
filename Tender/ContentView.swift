@@ -298,18 +298,19 @@ private struct AgentDetailView: View {
     @ViewBuilder
     private var actionBar: some View {
         HStack(spacing: Space.sm) {
-            switch status {
-            case .disabled:
-                Button("有効化") { onEnable() }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(runningAction != nil)
-                    .keyboardShortcut("e", modifiers: [.command, .shift])
-            default:
-                Button("無効化") { onDisable() }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(runningAction != nil)
-                    .keyboardShortcut("e", modifiers: [.command, .shift])
+            // 有効化と無効化はトグルとして ⌘⇧E を共有する。修飾子は switch の外で 1 回だけ当てる。
+            // これは「switch が単一の visible button を返す前提」を構造で示すための意図的な集約。
+            Group {
+                switch status {
+                case .disabled:
+                    Button("有効化") { onEnable() }
+                default:
+                    Button("無効化") { onDisable() }
+                }
             }
+            .buttonStyle(.borderedProminent)
+            .disabled(runningAction != nil)
+            .keyboardShortcut("e", modifiers: [.command, .shift])
 
             Button {
                 onKickstart()
