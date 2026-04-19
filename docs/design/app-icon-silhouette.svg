@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Tender app icon silhouette — Dock 32px 識別性チェック用
+  brief: 「葉の輪郭 + イヤーピース 2 円」で Tender が識別できる状態を残す
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <rect x="0" y="0" width="1024" height="1024" rx="230" ry="230" fill="#F4F1EA"/>
+
+  <!-- 葉 (上 60%) — シルエット単色 -->
+  <g transform="translate(512 398)" fill="#7BB68A">
+    <ellipse cx="150" cy="0" rx="150" ry="50" transform="rotate(-32)"/>
+    <ellipse cx="125" cy="0" rx="125" ry="45" transform="rotate(-64)"/>
+  </g>
+
+  <!-- イヤーピース 2 円 (下 40%) -->
+  <circle cx="380" cy="720" r="115" fill="#8E949A"/>
+  <circle cx="644" cy="720" r="115" fill="#8E949A"/>
+</svg>
