@@ -20,38 +20,27 @@
 - Xcode 16 以上、Swift 6.0
 - `xcodegen`（プロジェクト生成。`.xcodeproj` は gitignore）
 
-## セットアップ
+## インストール
 
 ```bash
-# 初回のみ
+# 1. プロジェクト生成 + ビルド
 brew install xcodegen
-xcodegen generate        # project.yml から Tender.xcodeproj を生成
-
-# ビルド
+xcodegen generate
 xcodebuild -project Tender.xcodeproj -scheme Tender build
 
-# テスト（TenderCore、176 ケース）
-cd TenderCore && swift test
-```
-
-Xcode で開くなら `open Tender.xcodeproj`。
-
-### 普段使いする場合
-
-Debug ビルドを `~/Applications/` にシンボリックリンクして Spotlight / Raycast / Launchpad から起動できるようにする。
-
-```bash
-# 初回のみ
+# 2. ~/Applications に symlink を置いて Spotlight / Raycast / Launchpad から起動できるようにする
 APP=$(ls -d ~/Library/Developer/Xcode/DerivedData/Tender-*/Build/Products/Debug/Tender.app | head -1)
 mkdir -p ~/Applications
 ln -s "$APP" ~/Applications/Tender.app
 
-# Launch Services / Spotlight に認識させる
+# 3. Launch Services / Spotlight に登録
 /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f ~/Applications/Tender.app
 mdimport ~/Applications/Tender.app
 ```
 
-Raycast でヒットしないときは Raycast を再起動（`⌃⌘R` or Quit & Reopen）。以降は Xcode で Build するたびにリンク先が更新される。
+Raycast でヒットしないときは Raycast を再起動（`⌃⌘R` or Quit & Reopen）。以降は Xcode で Build するたびに symlink 先が最新になる。
+
+コードを編集するなら `open Tender.xcodeproj` で Xcode へ。テストは `cd TenderCore && swift test`（176 ケース）。
 
 ## 機能（現状）
 
