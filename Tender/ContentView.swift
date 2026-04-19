@@ -9,10 +9,20 @@ struct ContentView: View {
     @State private var migrationAgent: LaunchAgent?
     @State private var detachAgent: LaunchAgent?
     @State private var backupHistoryAgent: LaunchAgent?
+    @State private var searchText = ""
     @Query(sort: \Intent.label) private var allIntents: [Intent]
 
     private var intentsByLabel: [String: Intent] {
         Dictionary(uniqueKeysWithValues: allIntents.map { ($0.label, $0) })
+    }
+
+    private var filteredAgents: [LaunchAgent] {
+        let trimmed = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return store.agents }
+        return store.agents.filter { agent in
+            agent.label.localizedCaseInsensitiveContains(trimmed) ||
+            (intentsByLabel[agent.label]?.why.localizedCaseInsensitiveContains(trimmed) ?? false)
+        }
     }
 
     var body: some View {
@@ -20,6 +30,7 @@ struct ContentView: View {
             sidebar
                 .navigationTitle("Tender")
                 .navigationSplitViewColumnWidth(min: 220, ideal: 280)
+                .searchable(text: $searchText, placement: .sidebar, prompt: "ラベル / Intent を検索")
         } detail: {
             detail
         }
@@ -56,7 +67,7 @@ struct ContentView: View {
                 description: Text("~/Library/LaunchAgents に .plist が置かれていません。")
             )
         } else {
-            List(store.agents, selection: $selection) { agent in
+            List(filteredAgents, selection: $selection) { agent in
                 AgentRow(
                     agent: agent,
                     status: store.status(for: agent),
