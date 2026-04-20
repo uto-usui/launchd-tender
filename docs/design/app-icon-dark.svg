@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   Tender app icon (Dark) — 水紋 (ripple) ダーク版
-  背景のみ dim moss、インクは soft white。
+  線の太さ 18 固定、無彩色の 3 段階で内→外に薄く。
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-  <rect x="0" y="0" width="1024" height="1024" rx="230" ry="230" fill="#2F3531"/>
+  <rect x="0" y="0" width="1024" height="1024" rx="230" ry="230" fill="#2E3331"/>
 
-  <g fill="none" stroke="#E8EAEA" stroke-linecap="round">
-    <circle cx="512" cy="512" r="380" stroke-width="10" opacity="0.28"/>
-    <circle cx="512" cy="512" r="260" stroke-width="14" opacity="0.55"/>
-    <circle cx="512" cy="512" r="140" stroke-width="20" opacity="0.95"/>
+  <g fill="none" stroke-width="18" stroke-linecap="round">
+    <circle cx="512" cy="512" r="380" stroke="#515554"/>
+    <circle cx="512" cy="512" r="260" stroke="#8A8E8C"/>
+    <circle cx="512" cy="512" r="140" stroke="#E6E8E7"/>
   </g>
 
-  <circle cx="512" cy="512" r="22" fill="#E8EAEA"/>
+  <circle cx="512" cy="512" r="24" fill="#E6E8E7"/>
 </svg>

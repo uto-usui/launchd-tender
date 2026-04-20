@@ -2,20 +2,19 @@
 <!--
   Tender app icon (Light) — 水紋 (ripple)
   コンセプト: 繰り返す出来事を静かに眺める。
-  中心点 = ジョブが起動した瞬間 / リング = その余韻が広がっていく。
-  1024×1024、squircle 背景、line-art 単色。
+  線の太さは全て 18 で統一、無彩色の 3 段階グレーで減衰を表現。
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
   <!-- 背景 -->
   <rect x="0" y="0" width="1024" height="1024" rx="230" ry="230" fill="#F4F1EA"/>
 
-  <!-- 水紋: 外から内へ描いて手前のリングが上にくる順 -->
-  <g fill="none" stroke="#2F3531" stroke-linecap="round">
-    <circle cx="512" cy="512" r="380" stroke-width="10" opacity="0.30"/>
-    <circle cx="512" cy="512" r="260" stroke-width="14" opacity="0.60"/>
-    <circle cx="512" cy="512" r="140" stroke-width="20" opacity="0.95"/>
+  <!-- 水紋: 太さ固定、色で減衰 (外側 → 内側で濃く) -->
+  <g fill="none" stroke-width="18" stroke-linecap="round">
+    <circle cx="512" cy="512" r="380" stroke="#BEC0BF"/>
+    <circle cx="512" cy="512" r="260" stroke="#7C807E"/>
+    <circle cx="512" cy="512" r="140" stroke="#2E3331"/>
   </g>
 
   <!-- 中心点: ジョブが起動した瞬間 -->
-  <circle cx="512" cy="512" r="22" fill="#2F3531"/>
+  <circle cx="512" cy="512" r="24" fill="#2E3331"/>
 </svg>
