@@ -1,42 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Tender app icon (Dark) — 線画スタイル
-  dim moss 背景にソフトホワイトのインク。葉だけ systemGreen tint を残す。
+  Tender app icon (Dark) — 水紋 (ripple) ダーク版
+  背景のみ dim moss、インクは soft white。
 -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
-  <defs>
-    <linearGradient id="leafTint" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%"   stop-color="#7BB68A" stop-opacity="0.22"/>
-      <stop offset="100%" stop-color="#7BB68A" stop-opacity="0.38"/>
-    </linearGradient>
-  </defs>
-
   <rect x="0" y="0" width="1024" height="1024" rx="230" ry="230" fill="#2F3531"/>
 
-  <g stroke="#E8EAEA" stroke-width="22" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M 380 600 C 380 545, 470 505, 512 495 L 512 400"/>
-    <path d="M 644 600 C 644 545, 554 505, 512 495"/>
-    <circle cx="380" cy="720" r="115"/>
-    <circle cx="644" cy="720" r="115"/>
-    <path d="M 488 398 Q 512 378, 536 398"/>
+  <g fill="none" stroke="#E8EAEA" stroke-linecap="round">
+    <circle cx="512" cy="512" r="380" stroke-width="10" opacity="0.28"/>
+    <circle cx="512" cy="512" r="260" stroke-width="14" opacity="0.55"/>
+    <circle cx="512" cy="512" r="140" stroke-width="20" opacity="0.95"/>
   </g>
 
-  <g transform="translate(512 398)">
-    <g transform="rotate(-32)">
-      <ellipse cx="150" cy="0" rx="150" ry="50" fill="url(#leafTint)"/>
-      <ellipse cx="150" cy="0" rx="150" ry="50"
-               stroke="#E8EAEA" stroke-width="22" fill="none"/>
-      <path d="M 8 0 Q 150 -8, 292 0"
-            stroke="#E8EAEA" stroke-width="10" fill="none"
-            stroke-linecap="round" opacity="0.85"/>
-    </g>
-    <g transform="rotate(-64)">
-      <ellipse cx="125" cy="0" rx="125" ry="45" fill="url(#leafTint)"/>
-      <ellipse cx="125" cy="0" rx="125" ry="45"
-               stroke="#E8EAEA" stroke-width="22" fill="none"/>
-      <path d="M 8 0 Q 125 -7, 242 0"
-            stroke="#E8EAEA" stroke-width="10" fill="none"
-            stroke-linecap="round" opacity="0.85"/>
-    </g>
-  </g>
+  <circle cx="512" cy="512" r="22" fill="#E8EAEA"/>
 </svg>
