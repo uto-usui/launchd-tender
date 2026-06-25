@@ -82,6 +82,33 @@ launchd は Keychain 参照記法を理解しないため、**ラッパー scrip
 - SwiftData `BackupEntry` として履歴保存
 - 「バックアップ履歴」sheet: 一覧 + 内容プレビュー + confirmationDialog 経由で復元（復元前も自動バックアップ）
 
+## 新しいジョブを追加する（= LLM に頼む）
+
+Tender 自体には新規追加フォームはまだ未実装（`ai/todo/design.md` の Phase 5 タスク）。
+代わりに **`~/Library/LaunchAgents/<label>.plist` をファイルとして置けばサイドバーに出てくる**ので、plist 生成は Claude Code などの LLM に任せる運用にしている。サイドバーは `DispatchSource` でディレクトリ変更を監視しているため、保存と同時に行が増える。
+
+このリポジトリ直下で Claude Code を開いて、こんな感じで頼む:
+
+> `~/Library/LaunchAgents/com.uto.<name>.plist` を作って。
+> - Label: `com.uto.<name>`
+> - 目的: <一行>
+> - 実行: <絶対パスのコマンド or スクリプト>
+> - スケジュール: 毎日 07:30（`StartCalendarInterval`）/ 60 分おき（`StartInterval`）/ `RunAtLoad` のみ … など
+> - stdout/stderr: `~/Library/Logs/<name>.{out,err}.log`
+> - 必要なら `EnvironmentVariables`（秘密値は平文埋め込み禁止）
+> - 最後に `launchctl bootstrap gui/$UID` で読み込んで
+
+LLM 側は [CLAUDE.md](./CLAUDE.md) のガードレールに沿って:
+
+1. 既存があれば `~/Library/Application Support/Tender/backups/<label>/<timestamp>.plist` に退避
+2. plist を tmp → rename の atomic write で配置
+3. `plutil -lint` で構文検証
+4. `launchctl bootstrap gui/$UID <path>` でロード、`launchctl print-disabled gui/$UID | grep <label>` で確認
+
+までやる。Intent（why / 期待頻度 / 復旧手順）は反映後に Tender 上で書き足せばいい。
+
+> **注意:** 秘密情報を `EnvironmentVariables` に平文で書かない。launchd は Keychain 参照記法を理解しないので、`security find-generic-password` で取り出すラッパー script 経由にする。LLM がうっかり平文を埋め込んできた場合は、Tender 詳細ペインの「Keychain へ移動」（Phase 6 機能）で wrapper 化できる。
+
 ## アーキテクチャ
 
 ```
